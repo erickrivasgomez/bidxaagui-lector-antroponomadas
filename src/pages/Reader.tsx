@@ -87,22 +87,22 @@ const Reader: React.FC = () => {
     if (error || !edition) return <div className="preview-error">{error}</div>;
 
     // Dimensions
-    const containerH = window.innerHeight - 80;
-    const containerW = window.innerWidth - 40;
+    const headerHeight = 60;
+    const footerHeight = 30;
+    const padding = 40; // Space for buttons
+    const availableH = window.innerHeight - headerHeight - footerHeight - padding;
+    const availableW = window.innerWidth - (isMobile ? 20 : 100); // More side padding on desktop for buttons
 
-    let pageHeight = containerH;
-    let pageWidth = pageHeight * 0.70;
+    let pageHeight = availableH;
+    let pageWidth = pageHeight * 0.707; // A4 aspect ratio
 
-    if (!isMobile) {
-        if ((pageWidth * 2) > containerW) {
-            pageWidth = (containerW / 2);
-            pageHeight = pageWidth / 0.70;
-        }
-    } else {
-        if (pageWidth > containerW) {
-            pageWidth = containerW;
-            pageHeight = pageWidth / 0.70;
-        }
+    // Check width constraint
+    const totalWidthNeeded = isMobile ? pageWidth : pageWidth * 2;
+    if (totalWidthNeeded > availableW) {
+        // Scale down by width
+        const scale = availableW / totalWidthNeeded;
+        pageWidth = pageWidth * scale;
+        pageHeight = pageHeight * scale;
     }
 
     return (
@@ -111,33 +111,35 @@ const Reader: React.FC = () => {
             <div className="preview-header">
                 <div className="header-left">
                     <button onClick={() => navigate('/')} className="btn-back">
-                        ← Ver todas las ediciones
+                        ← Ediciones
                     </button>
                     <span className="edition-title-preview">{edition.titulo}</span>
                 </div>
                 <div className="header-right">
-                    <button onClick={handleDownload} className="btn-download">
-                        Descargar PDF
-                    </button>
+                    {/* Placeholder for future tools */}
                 </div>
             </div>
 
             {/* Stage */}
             <div className="preview-stage">
-                <div className="book-wrapper" style={{
-                    width: isMobile ? pageWidth : pageWidth * 2,
-                    height: pageHeight
-                }}>
+                <button
+                    className="preview-nav prev"
+                    onClick={() => bookRef.current?.pageFlip()?.flipPrev()}
+                >
+                    ‹
+                </button>
+
+                <div className="book-wrapper">
                     <HTMLFlipBook
                         key={isMobile ? 'mobile' : 'desktop'}
                         width={Math.floor(pageWidth)}
                         height={Math.floor(pageHeight)}
-                        size={isMobile ? "fixed" : "stretch"}
-                        minWidth={300}
+                        size="fixed"
+                        minWidth={200}
                         maxWidth={1000}
-                        minHeight={400}
-                        maxHeight={1414}
-                        maxShadowOpacity={isMobile ? 0.2 : 0.5}
+                        minHeight={300}
+                        maxHeight={1400}
+                        maxShadowOpacity={0.5}
                         showCover={true}
                         mobileScrollSupport={true}
                         onFlip={onFlip}
@@ -192,13 +194,6 @@ const Reader: React.FC = () => {
                     </HTMLFlipBook>
                 </div>
 
-                {/* Nav Controls */}
-                <button
-                    className="preview-nav prev"
-                    onClick={() => bookRef.current?.pageFlip()?.flipPrev()}
-                >
-                    ‹
-                </button>
                 <button
                     className="preview-nav next"
                     onClick={() => bookRef.current?.pageFlip()?.flipNext()}
@@ -208,7 +203,7 @@ const Reader: React.FC = () => {
             </div>
 
             <div className="preview-footer">
-                Página {currentPage + 1} de {totalPages + 2}
+                <span>{currentPage + 1} / {totalPages + 2}</span>
             </div>
         </div>
     );
