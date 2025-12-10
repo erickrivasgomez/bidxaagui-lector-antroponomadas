@@ -32,13 +32,16 @@ export interface Page {
 export const readerAPI = {
     // Get all PUBLIC editions
     getEditions: async (): Promise<Edition[]> => {
-        const response = await api.get('/ediciones'); // Assuming this public endpoint exists
-        return response.data;
+        const response = await api.get('/ediciones');
+        // Backend returns: { success: true, data: results, ... }
+        // Axios returns: { data: { success: true, data: results }, ... }
+        // So we need response.data.data
+        return response.data.data;
     },
 
     // Get pages for an edition
     getPages: async (id: string): Promise<Page[]> => {
-        const response = await api.get(`/ediciones/${id}/pages`); // Assuming this public endpoint exists
-        return response.data;
+        const response = await api.get(`/ediciones/${id}/pages`);
+        return response.data.data;
     }
 };
