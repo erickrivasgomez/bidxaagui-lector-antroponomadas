@@ -15,7 +15,9 @@ const Home: React.FC = () => {
                 const data = await readerAPI.getEditions();
                 // Filter only published ones if API returns all (though endpoint usually filters)
                 // Assuming public endpoint only returns published or we filter client side
-                setEditions(data.filter(e => e.publicada));
+                // For now showing ALL for testing purposes, even drafts.
+                setEditions(data);
+                // setEditions(data.filter(e => Boolean(e.publicada)));
             } catch (error) {
                 console.error('Error fetching editions:', error);
             } finally {
