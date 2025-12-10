@@ -1,0 +1,175 @@
+.preview-container {
+    width: 100vw;
+    height: 100vh;
+    background: #1a1a1a;
+    /* Dark premium background */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    color: white;
+}
+
+.preview-header {
+    height: 60px;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 2rem;
+    z-index: 10;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.btn-back {
+    background: none;
+    border: none;
+    color: #aeaeae;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.btn-back:hover {
+    color: white;
+}
+
+.edition-title-preview {
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+
+.btn-download {
+    background: var(--accent-rust, #cc4400);
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-download:hover {
+    opacity: 0.9;
+}
+
+.preview-stage {
+    flex: 1;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    padding: 1rem;
+}
+
+.book-wrapper {
+    position: relative;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+    transition: width 0.3s, height 0.3s;
+}
+
+/* Page Styles */
+.page {
+    background-color: white;
+    box-shadow: inset -1px 0 2px rgba(0, 0, 0, 0.1);
+    /* Spine shadow */
+}
+
+.page-content {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+    background: #fff;
+}
+
+.page-cover {
+    background-color: #f0f0f0;
+}
+
+.page-image {
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    /* Ensure it fills exact paper size */
+}
+
+.page-number {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #444;
+    font-size: 10px;
+}
+
+.back-cover {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #2a2a2a;
+    color: white;
+}
+
+/* Nav Buttons */
+.preview-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 20;
+    transition: background 0.2s;
+    display: flex;
+    justify-content: center;
+    padding-bottom: 5px;
+}
+
+.preview-nav:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.preview-nav.prev {
+    left: 2rem;
+}
+
+.preview-nav.next {
+    right: 2rem;
+}
+
+.preview-footer {
+    height: 30px;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8rem;
+    color: #888;
+}
+
+.preview-loading,
+.preview-error {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    background: #1a1a1a;
+    font-size: 1.2rem;
+}
