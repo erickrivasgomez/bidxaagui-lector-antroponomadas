@@ -1,9 +1,39 @@
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import HTMLFlipBook from 'react-pageflip';
-import { readerAPI, API_URL, type Edition, type Page } from '../services/api';
+import axios from 'axios';
 import '../styles/Reader.css';
+
+// Tipos de datos
+interface Edition {
+    id: string;
+    titulo: string;
+    descripcion: string;
+    cover_url: string;
+    fecha: string;
+    publicada: number;
+    created_at: string;
+    updated_at: string;
+}
+
+interface Page {
+    id: string;
+    edicion_id: string;
+    imagen_url: string;
+    numero_pagina: number;
+    created_at: string;
+    updated_at: string;
+}
+
+const API_URL = 'https://api.bidxaagui.com';
+
+// Configuración de axios
+const api = axios.create({
+    baseURL: API_URL,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
 
 const Reader: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -29,9 +59,10 @@ const Reader: React.FC = () => {
             if (!id) return;
             try {
                 setLoading(true);
-                // Ideally this should use getEdition(id) public endpoint
-                const allEditions = await readerAPI.getEditions();
-                const found = allEditions.find(e => e.id === id);
+                
+                // Obtener los detalles de la edición
+                const editionsResponse = await api.get('/api/ediciones');
+                const found = editionsResponse.data.data.find((e: Edition) => e.id === id);
 
                 if (!found) {
                     setError('Edición no encontrada');
@@ -39,13 +70,19 @@ const Reader: React.FC = () => {
                 }
                 setEdition(found);
 
-                const pagesData = await readerAPI.getPages(id);
-                setPages(pagesData);
-                setTotalPages(pagesData.length);
+                // Obtener las páginas de la edición
+                const pagesResponse = await api.get(`/api/ediciones/${id}/paginas`);
+                const pagesData = pagesResponse.data.data || [];
+                
+                // Ordenar páginas por número de página
+                const sortedPages = [...pagesData].sort((a, b) => a.numero_pagina - b.numero_pagina);
+                
+                setPages(sortedPages);
+                setTotalPages(sortedPages.length);
 
             } catch (err) {
-                console.error(err);
-                setError('Error al cargar la edición');
+                console.error('Error al cargar la edición:', err);
+                setError('Error al cargar la edición. Por favor, intente nuevamente.');
             } finally {
                 setLoading(false);
             }
@@ -78,10 +115,6 @@ const Reader: React.FC = () => {
     const onFlip = useCallback((e: any) => {
         setCurrentPage(e.data);
     }, []);
-
-    const handleDownload = () => {
-        alert('La descarga de PDF estará disponible próximamente.');
-    };
 
     if (loading) return <div className="preview-loading">Cargando revista...</div>;
     if (error || !edition) return <div className="preview-error">{error}</div>;
@@ -177,10 +210,10 @@ const Reader: React.FC = () => {
                                 <div className="page-content">
                                     <img
                                         src={`${API_URL}/api/images/${page.imagen_url}`}
-                                        alt={`Página ${page.numero}`}
-                                        className="page-image"
+                                        alt={`Página ${page.numero_pagina}`}
+                                        loading="lazy"
                                     />
-                                    <div className="page-number">{page.numero}</div>
+                                    <div className="page-number">{page.numero_pagina}</div>
                                 </div>
                             </div>
                         ))}

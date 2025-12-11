@@ -42,21 +42,33 @@ const Home: React.FC = () => {
                     <div className="empty-state">No hay ediciones publicadas aún.</div>
                 ) : (
                     editions.map(edition => (
-                        <div key={edition.id} className="edition-card" onClick={() => navigate(`/read/${edition.id}`)}>
+                        <div key={edition.id} className="edition-card" onClick={() => navigate(`/leer/${edition.id}`)}>
                             <div className="card-cover">
-                                {/* Using API_URL for cover image (assuming cover_url is stored as key) */}
-                                {/* If cover_url is full URL, use it directly. If key, prepend API_URL/images/ */}
-                                {/* Based on previous logic, cover_url might just be the Key */}
                                 <img
                                     src={edition.cover_url?.startsWith('http') ? edition.cover_url : `${API_URL}/api/images/${edition.cover_url || 'placeholder'}`}
                                     alt={edition.titulo}
                                     onError={(e) => { e.currentTarget.src = 'https://placehold.co/400x560?text=Cover'; }}
+                                    loading="lazy"
                                 />
                             </div>
                             <div className="card-info">
                                 <h3>{edition.titulo}</h3>
-                                <span className="card-date">{new Date(edition.fecha).toLocaleDateString()}</span>
-                                <button className="btn-read">Leer Ahora</button>
+                                <span className="card-date">
+                                    {new Date(edition.fecha).toLocaleDateString('es-MX', {
+                                        year: 'numeric',
+                                        month: 'long',
+                                        day: 'numeric'
+                                    })}
+                                </span>
+                                <button 
+                                    className="btn-read"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        navigate(`/leer/${edition.id}`);
+                                    }}
+                                >
+                                    Leer Ahora
+                                </button>
                             </div>
                         </div>
                     ))
